@@ -1,0 +1,9 @@
+.idea*
+datasets
+*.log
+.DS_Store
+project/project
+target/
+*.iml
+spark-warehouse/
+/src/main/resources/application.conf
