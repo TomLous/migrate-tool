@@ -7,3 +7,5 @@ target/
 *.iml
 spark-warehouse/
 /src/main/resources/application.conf
+/source-repos
+repos
