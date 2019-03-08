@@ -25,8 +25,11 @@ while read gitrepo; do
   echo -n "Cloning $gitrepo to $gitname ... "
   git clone --depth 1 --quiet $gitrepo $gitname
   echo "OK"
-  echo -n "Creating bitbucket repo ... "
-  httpStatus=$(curl -s -o /dev/null -w "%{http_code}"  -H "Authorization: Bearer $accessToken" -H "Content-Type: application/json" "https://api.bitbucket.org/2.0/repositories/$accountName/$gitname" -d '{"scm":"git","project":{"key":"'$projectKey'"},"is_private":"true"}')
+#  echo -n "Deleting bitbucket repo  $gitname ... "
+#  httpStatus=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE  -H "Authorization: Bearer $accessToken"  "https://api.bitbucket.org/2.0/repositories/$accountName/$gitname")
+#  echo $httpStatus
+  echo -n "Creating bitbucket repo $gitname ... "
+  httpStatus=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Authorization: Bearer $accessToken" -H "Content-Type: application/json" "https://api.bitbucket.org/2.0/repositories/$accountName/$gitname" -d '{"scm":"git","project":{"key":"'$projectKey'"},"is_private":"true"}')
   if [[ $httpStatus -eq "200" ]]; then
       echo "Ok"
       cd $ORIGIN/repos/$gitname || { echo 'Failed to change to repo' ; exit 1; }
@@ -34,7 +37,7 @@ while read gitrepo; do
       git init
       git config user.name $userName
       git config user.email $userEmail
-      git add . cd > /dev/null
+      git add . > /dev/null
       git commit -m "First from shallow clone" --quiet
     #  git filter-branch -- --all
       git remote add origin git@bitbucket.org:$accountName/$gitname.git || { echo 'Failed to change the origin' ; exit 1; }
