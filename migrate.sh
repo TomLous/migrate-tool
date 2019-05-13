@@ -8,6 +8,7 @@ projectKey=$3
 accountName=$4
 userName=$5
 userEmail=$6
+force=${7:-0}
 
 ORIGIN=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
@@ -30,7 +31,7 @@ while read gitrepo; do
 #  echo $httpStatus
   echo -n "Creating bitbucket repo $gitname ... "
   httpStatus=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Authorization: Bearer $accessToken" -H "Content-Type: application/json" "https://api.bitbucket.org/2.0/repositories/$accountName/$gitname" -d '{"scm":"git","project":{"key":"'$projectKey'"},"is_private":"true"}')
-  if [[ $httpStatus -eq "200" ]]; then
+  if [[ $force -eq "1" || $httpStatus -eq "200" ]]; then
       echo "Ok"
       cd $ORIGIN/repos/$gitname || { echo 'Failed to change to repo' ; exit 1; }
       rm -rf .git
